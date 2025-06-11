@@ -1,10 +1,14 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ServanaAPP;
+using ServanaAPP.Helpers.JWT;
 using ServanaAPP.Helpers.OtpUserSelection;
 using ServanaAPP.Helpers.SendingEmail;
 using ServanaAPP.Interfaces;
 using ServanaAPP.Models;
 using ServanaAPP.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +27,7 @@ builder.Services.AddScoped<OtpBasedOnUserRole>();
 builder.Services.Configure<SendGridSettings>(
     builder.Configuration.GetSection("SendGrid"));
 builder.Services.AddScoped<IAuthentication, AuthServices>();
+builder.Services.AddScoped<GenerateJwtTokenHelper>();
 
 var app = builder.Build();
 

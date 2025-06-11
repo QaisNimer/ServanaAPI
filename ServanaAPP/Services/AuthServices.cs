@@ -1,5 +1,7 @@
-﻿using ServanaAPP.DTOs.Signup.Request;
+﻿using Microsoft.EntityFrameworkCore;
+using ServanaAPP.DTOs.Signup.Request;
 using ServanaAPP.DTOs.Verification.Request;
+using ServanaAPP.Helpers.JWT;
 using ServanaAPP.Helpers.OtpUserSelection;
 using ServanaAPP.Helpers.ValidationHelpers;
 using ServanaAPP.Interfaces;
@@ -11,13 +13,33 @@ namespace ServanaAPP.Services
     {
         private readonly ServanaDbContext _db;
         private readonly OtpBasedOnUserRole _otpBasedOnUserRole;
-        public AuthServices(ServanaDbContext servanaDbContext, OtpBasedOnUserRole otpBasedOnUserRole) {
-            _db= servanaDbContext;
-            _otpBasedOnUserRole = otpBasedOnUserRole;
-        }
-        public Task<string> ResetPassword(ResetPasswordRequestDTO input)
+        private readonly GenerateJwtTokenHelper _jwtTokenHelper;
+        public AuthServices(ServanaDbContext servanaDbContext, OtpBasedOnUserRole otpBasedOnUserRole, GenerateJwtTokenHelper jwtTokenHelper)
         {
-            throw new NotImplementedException();
+            _db = servanaDbContext;
+            _otpBasedOnUserRole = otpBasedOnUserRole;
+            _jwtTokenHelper = jwtTokenHelper;
+        }
+        public async Task<string> ResetPassword(ResetPasswordRequestDTO input)
+        {
+            var user = _db.Users.Where(u => u.Email == input.Email && u.OTP == input.OTP
+             && u.IsLoggedIn == false && u.ExpiryOTP > DateTime.Now).SingleOrDefault();
+            if (user == null)
+            {
+                return "Go To SendOTPToResetPassword OR Signup if you DON'T have account";
+            }
+            if (input.NewPassword != input.ConfirmPassword)
+            {
+                return "Confirmation Of Password Failed !";
+            }
+            user.OTP = null;
+            user.ExpiryOTP = null;
+            user.Password = input.NewPassword;
+
+            _db.Update(user);
+            _db.SaveChanges();
+
+            return "Your Password Updated Successfully Please Login Again.";
         }
 
         public async Task<string> SendOTP(string email)
@@ -32,7 +54,7 @@ namespace ServanaAPP.Services
                 user.OTP = null;
                 user.ExpiryOTP = null;
                 Random random = new Random();
-                _db.Update(await _otpBasedOnUserRole.OTPBasedOnUserType(email, "OTP FOR RESET PASSWORD", "FOR RESET PASSWORD", user));
+                _db.Update(await _otpBasedOnUserRole.OTPBasedOnUserType(email, "OTP FOR USER", "FOR USER NEW OTP", user));
                 _db.SaveChanges();
                 return "Check your email OTP has been sent!";
             }
@@ -43,9 +65,30 @@ namespace ServanaAPP.Services
             }
         }
 
-        public Task<string> SignIn(SigninRequestDTO input)
+        public async Task<string> SignIn(SigninRequestDTO input)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _db.Users.Where(u => u.Email == input.Email && u.Password == input.Password).FirstOrDefaultAsync();
+                if (user == null)
+                {
+                    return $"No User Found";
+
+                }
+                if (!(ValidationHelpers.IsValidEmail(input.Email) || ValidationHelpers.IsValidEmail(input.Password)))
+                {
+                    return $"Not Valid Email or Password";
+                }
+
+                _db.Update(await _otpBasedOnUserRole.OTPBasedOnUserType(user.Email, "OTP for Sign In.", "Completed Log In.", user));
+                _db.SaveChanges();
+                return "Check your email OTP has been sent!";
+
+            }
+            catch (Exception ex)
+            {
+                return $" Can't SignIn Try Again{ex.Message}";
+            }
         }
 
         public async Task<string> SignUp(SignupRequestDTO input)
@@ -72,7 +115,6 @@ namespace ServanaAPP.Services
                     var fileName = $"{Guid.NewGuid()}_{input.ProfileImageFile.FileName}";
                     var uploadPath = Path.Combine("Uploads", fileName);
 
-                    // Ensure directory exists
                     Directory.CreateDirectory(Path.GetDirectoryName(uploadPath)!);
 
                     using (var stream = new FileStream(uploadPath, FileMode.Create))
@@ -80,14 +122,13 @@ namespace ServanaAPP.Services
                         await input.ProfileImageFile.CopyToAsync(stream);
                     }
 
-                    user.ProfileImage = fileName; // ✅ Store filename in DB
+                    user.ProfileImage = fileName; 
                 }
                 else
                 {
-                    user.ProfileImage = null; // Or set a default placeholder
+                    user.ProfileImage = null; 
                 }
 
-                // Set user info
                 user.Email = input.Email;
                 user.Password = input.Password;
                 user.FullName = input.FullName;
@@ -118,10 +159,46 @@ namespace ServanaAPP.Services
             }
         }
 
-
-        public Task<string> Verification(VerificationRequestDTO input)
+        public async Task<string> Verification(VerificationRequestDTO input)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = _db.Users.Where(u => u.Email == input.Email && u.OTP == input.OTP
+                           && u.IsLoggedIn == false && u.ExpiryOTP > DateTime.Now).SingleOrDefault();
+                if (user == null)
+                {
+                    return "User not found";
+                }
+
+                if (input.IsSignup==true)
+                {
+                    user.IsVerified = true;
+                    user.ExpiryOTP = null;
+                    user.OTP = null;
+                    user.IsLoggedIn = false;
+                    input.IsSignup = false;
+                    _db.Update(user);
+                    _db.SaveChanges();
+                    return "Your Account Is Verifyed";
+                }
+                else
+                {
+                    user.IsLoggedIn = true;
+                    user.ExpiryOTP = null;
+                    user.OTP = null;
+
+                    _db.Update(user);
+                    _db.SaveChanges();
+                    var token = _jwtTokenHelper.CreateToken(user);
+                    return token;
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
