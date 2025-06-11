@@ -1,70 +1,8 @@
-﻿//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using ServanaAPP.DTOs.Signup.Request;
-//using ServanaAPP.DTOs.Verification.Request;
-//using ServanaAPP.Helpers.OtpUserSelection;
-//using ServanaAPP.Interfaces;
-//using ServanaAPP.Models;
-//using ServanaAPP.Services;
-
-//namespace ServanaAPP.Controllers
-//{
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class AuthenticationController : ControllerBase
-//    {
-//        private readonly IAuthentication _authService;
-//        public AuthenticationController(IAuthentication authentication) { 
-//            _authService= authentication;
-//        }
-//        [HttpPost("{action}")]
-//        public async Task<IActionResult> SignUp(SignupRequestDTO input) {
-//            try
-//            {
-//                var token = await _authService.SignUp(input);
-//                return StatusCode(200, "The OTP has been sent, Check You Email");
-//            }
-//            catch (Exception ex)
-//            {
-
-//                return StatusCode(500, ex.Message);
-//            }
-//        }
-
-//        [HttpPost("{action}")]
-//        public async Task<IActionResult> OTP(string email)
-//        {
-//            try
-//            {
-//                return StatusCode(200, "The OTP has been sent, Check You Email");
-//            }
-//            catch (Exception ex)
-//            {
-
-//                return StatusCode(500, ex.Message);
-//            }
-//        }
-
-//        [HttpPost("{action}")]
-//        public async Task<IActionResult> Verification(VerificationRequestDTO input)
-//        {
-//            try
-//            {
-//                return StatusCode(200, "Done");
-//            }
-//            catch (Exception ex)
-//            {
-
-//                return StatusCode(500, ex.Message);
-//            }
-//        }
-//    }
-//}
-
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using ServanaAPP.DTOs.Signup.Request;
 using ServanaAPP.DTOs.Verification.Request;
+using ServanaAPP.Helpers.JWT;
 using ServanaAPP.Interfaces;
 using System;
 using System.Threading.Tasks;
@@ -76,10 +14,11 @@ namespace ServanaAPP.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthentication _authService;
-
-        public AuthenticationController(IAuthentication authentication)
+        private readonly GenerateJwtTokenHelper _jwtTokenHelper;
+        public AuthenticationController(IAuthentication authentication, GenerateJwtTokenHelper generateJwtTokenHelper)
         {
             _authService = authentication;
+            _jwtTokenHelper = generateJwtTokenHelper;
         }
 
         [HttpPost("signup")]
@@ -87,8 +26,8 @@ namespace ServanaAPP.Controllers
         {
             try
             {
-                var result = await _authService.SignUp(input);
-                return Ok(new { message = result });
+                var token = await _authService.SignUp(input);
+                return Ok(token);
             }
             catch (Exception ex)
             {
@@ -101,11 +40,11 @@ namespace ServanaAPP.Controllers
         {
             try
             {
-               /* var result = await _authService.SignIn(input);
-                if (string.IsNullOrEmpty(result) || result == "User not found")
-                    return Unauthorized(new { message = "Invalid credentials." });*/
+                var token = await _authService.SignIn(input);
+                if (string.IsNullOrEmpty(token) || token == "User not found")
+                    return Unauthorized(new { message = "Invalid credentials." });
+                return Ok(new { token = token });
 
-                return Ok("loggedin");
             }
             catch (Exception ex)
             {
@@ -156,4 +95,3 @@ namespace ServanaAPP.Controllers
         }
     }
 }
-
