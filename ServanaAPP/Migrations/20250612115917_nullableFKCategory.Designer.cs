@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServanaAPP.Models;
 
@@ -11,9 +12,11 @@ using ServanaAPP.Models;
 namespace ServanaAPP.Migrations
 {
     [DbContext(typeof(ServanaDbContext))]
-    partial class ServanaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250612115917_nullableFKCategory")]
+    partial class nullableFKCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,7 +49,7 @@ namespace ServanaAPP.Migrations
 
                     b.HasKey("CategoryID");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("ServanaAPP.Models.JobRequest", b =>
@@ -210,7 +213,7 @@ namespace ServanaAPP.Migrations
                     b.Property<string>("AddressTitle")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CategoryID")
+                    b.Property<int?>("CategoryID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -397,8 +400,7 @@ namespace ServanaAPP.Migrations
                     b.HasOne("ServanaAPP.Models.Category", "Category")
                         .WithMany("Users")
                         .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Category");
                 });

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ServanaAPP.DTOs.Signup.Request;
 using ServanaAPP.DTOs.Verification.Request;
+using ServanaAPP.Helpers.ImageHelpers;
 using ServanaAPP.Helpers.JWT;
 using ServanaAPP.Helpers.OtpUserSelection;
 using ServanaAPP.Helpers.ValidationHelpers;
@@ -112,17 +113,8 @@ namespace ServanaAPP.Services
                 // Handle profile image upload
                 if (input.ProfileImageFile != null)
                 {
-                    var fileName = $"{Guid.NewGuid()}_{input.ProfileImageFile.FileName}";
-                    var uploadPath = Path.Combine("Uploads", fileName);
-
-                    Directory.CreateDirectory(Path.GetDirectoryName(uploadPath)!);
-
-                    using (var stream = new FileStream(uploadPath, FileMode.Create))
-                    {
-                        await input.ProfileImageFile.CopyToAsync(stream);
-                    }
-
-                    user.ProfileImage = fileName; 
+                    string imagePath = await FileUploadHelper.UploadFileAsync(input.ProfileImageFile, "Uploads/UserProfileImages");
+                    user.ProfileImage = imagePath;
                 }
                 else
                 {
@@ -137,7 +129,15 @@ namespace ServanaAPP.Services
                 user.Gender = input.Gender;
                 user.CreatedBy = "System";
                 user.CreatedAt = DateTime.Now;
-
+                user.CategoryID = input.CategoryID;
+                if ((user.Role==2 || user.Role==1) && user.CategoryID !=1)
+                {
+                    throw new Exception("You Are A Client Or Admin, Your Category Is 1");
+                }
+                if (user.Role==3 && user.CategoryID==1)
+                {
+                    throw new Exception("You Are A Worker, Your Category Is 2-6");
+                }
                 _db.Users.Add(user);
                 _db.SaveChanges();
 

@@ -28,6 +28,7 @@ builder.Services.Configure<SendGridSettings>(
     builder.Configuration.GetSection("SendGrid"));
 builder.Services.AddScoped<IAuthentication, AuthServices>();
 builder.Services.AddScoped<GenerateJwtTokenHelper>();
+builder.Services.AddScoped<IHomeScreenClient, ClientHomeScreenService>();
 
 var app = builder.Build();
 
