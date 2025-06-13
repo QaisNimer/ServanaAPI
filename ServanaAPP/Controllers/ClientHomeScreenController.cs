@@ -101,5 +101,33 @@ namespace ServanaAPP.Controllers
                 return StatusCode(500, $"Something went wrong: {ex.Message}");
             }
         }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<FilterByPriceDTO>>> FilterByLowestPrice()
+        {
+            try
+            {
+                var filterByLowerPrice = await _homeScreenClient.FilterByLowestPrice();
+                return Ok(filterByLowerPrice);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Something went wrong: {ex.Message}");
+            }
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<FilterByPriceDTO>>> FilterByHighestPrice()
+        {
+            try
+            {
+                var filterByHighestPrice = await _homeScreenClient.FilterByHighestPrice();
+                return Ok(filterByHighestPrice);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Something went wrong: {ex.Message}");
+            }
+        }
     }
 }

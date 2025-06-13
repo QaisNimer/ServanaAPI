@@ -12,6 +12,7 @@ namespace ServanaAPP.Interfaces
         public Task<string> UpdateCategory(ClientUpdateCAtegoryRequestDTO input);
         public Task<string> DeleteCategory(int id);
         public Task<List<TopRatedWorkerDTO>> TopRatedWorkers();
-
+        public Task<List<FilterByPriceDTO>> FilterByHighestPrice();
+        public Task<List<FilterByPriceDTO>> FilterByLowestPrice();
     }
 }
