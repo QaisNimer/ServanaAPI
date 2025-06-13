@@ -1,4 +1,5 @@
 ﻿using ServanaAPP.DTOs.ClientHomeScreen.Request;
+using ServanaAPP.DTOs.ClientHomeScreen.Response;
 using ServanaAPP.Models;
 
 namespace ServanaAPP.Interfaces
@@ -10,6 +11,7 @@ namespace ServanaAPP.Interfaces
         public Task<string> AddCategory(AddCategoryRequestDTO input);
         public Task<string> UpdateCategory(ClientUpdateCAtegoryRequestDTO input);
         public Task<string> DeleteCategory(int id);
+        public Task<List<TopRatedWorkerDTO>> TopRatedWorkers();
 
     }
 }
