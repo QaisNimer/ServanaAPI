@@ -99,9 +99,9 @@ namespace ServanaAPP.Services
                 User user = new User();
 
                 // Validate email and password
-                if (!(ValidationHelpers.IsValidEmail(input.Email) || ValidationHelpers.IsValidatePassword(input.Password)))
+                if (!(ValidationHelpers.IsValidEmail(input.Email) && ValidationHelpers.IsValidPassword(input.Password)))
                 {
-                    return "Not Valid Email or Password";
+                    return "Invalid Email or Password";
                 }
 
                 // Validate full name
@@ -124,7 +124,10 @@ namespace ServanaAPP.Services
                 user.Email = input.Email;
                 user.Password = input.Password;
                 user.FullName = input.FullName;
-                user.PhoneNumber = input.Phonenum;
+                if (ValidationHelpers.IsValidPhone(input.Phonenum))
+                {
+                    user.PhoneNumber = input.Phonenum;
+                }
                 user.Role = input.Role;
                 user.Gender = input.Gender;
                 user.CreatedBy = "System";
