@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ServanaAPP.DTOs.ClientHomeScreen.Request;
 using ServanaAPP.DTOs.ClientHomeScreen.Response;
 using ServanaAPP.Helpers.ImageHelpers;
 using ServanaAPP.Interfaces;
 using ServanaAPP.Models;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ServanaAPP.Services
 {
@@ -117,23 +120,16 @@ namespace ServanaAPP.Services
             }
         }
 
-        public async Task<List<User>> SearchWorker(string name)
+        public async Task<List<User>> SearchWorker(string? name)
         {
-            try
-            {
-                var searchWorker = await _db.Users.Where(u => u.FullName == name).ToListAsync();
-                if (searchWorker==null)
-                {
-                    throw new Exception("There's No Worker With That Name");
-                }
-                return searchWorker;
+            if (string.IsNullOrWhiteSpace(name))
+                return new List<User>(); 
 
-            }
-            catch (Exception ex)
-            {
+            var searchWorker = await _db.Users
+                .Where(u => u.Role == 3 && EF.Functions.Like(u.FullName, $"%{name}%"))
+                .ToListAsync();
 
-                throw new Exception($"User Save Error: {ex.Message}");
-            }
+            return searchWorker;
         }
 
         public async Task<List<TopRatedWorkerDTO>> TopRatedWorkers() {

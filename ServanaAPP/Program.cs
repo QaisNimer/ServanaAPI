@@ -58,6 +58,7 @@ builder.Services.AddScoped<IAuthentication, AuthServices>();
 builder.Services.AddScoped<GenerateJwtTokenHelper>();
 builder.Services.AddScoped<IHomeScreenClient, ClientHomeScreenService>();
 builder.Services.AddScoped<IProfile, ProfileService>();
+builder.Services.AddScoped<IAllWorkersByCategoryId,AllWorkersByCategoryIdService>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServanaAPP.DTOs.ClientHomeScreen.Request;
 using ServanaAPP.DTOs.ClientHomeScreen.Response;
 using ServanaAPP.Interfaces;
+using ServanaAPP.Models;
 
 namespace ServanaAPP.Controllers
 {
@@ -76,16 +77,14 @@ namespace ServanaAPP.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> SearchWorker(string name) {
-            try
-            {
-                var searchWorker=await _homeScreenClient.SearchWorker(name);
-                return Ok(searchWorker);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+        public async Task<ActionResult<List<User>>> SearchWorker(string? name)
+        {
+            var result = await _homeScreenClient.SearchWorker(name);
+
+            if (result == null || !result.Any())
+                return NotFound("There's no worker with that name.");
+
+            return Ok(result);
         }
 
         [HttpGet("[action]")]
