@@ -1,7 +1,10 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ServanaAPP;
+using ServanaAPP.Helpers.Firebase;
 using ServanaAPP.Helpers.JWT;
 using ServanaAPP.Helpers.OtpUserSelection;
 using ServanaAPP.Helpers.SendingEmail;
@@ -58,8 +61,16 @@ builder.Services.AddScoped<IAuthentication, AuthServices>();
 builder.Services.AddScoped<GenerateJwtTokenHelper>();
 builder.Services.AddScoped<IHomeScreenClient, ClientHomeScreenService>();
 builder.Services.AddScoped<IProfile, ProfileService>();
-builder.Services.AddScoped<IAllWorkersByCategoryId,AllWorkersByCategoryIdService>();
+builder.Services.AddScoped<IAllWorkersByCategoryId, AllWorkersByCategoryIdService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<SendNotificationHelper>();
+
+var firebaseKeyPath = Path.Combine(Directory.GetCurrentDirectory(), "firebase", "servana-ab0e5-firebase-adminsdk-fbsvc-a882b6db07.json");
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile(firebaseKeyPath)
+});
 
 var app = builder.Build();
 
@@ -72,7 +83,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
