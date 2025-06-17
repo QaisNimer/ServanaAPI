@@ -11,11 +11,9 @@ namespace ServanaAPP.Services
     public class RequestWorkerService : IRequestWorker
     {
         private readonly ServanaDbContext _db;
-        //private readonly SendNotificationHelper _sendNotificationHelper;
-        public RequestWorkerService(ServanaDbContext db/*, SendNotificationHelper sendNotificationHelper*/)
+        public RequestWorkerService(ServanaDbContext db)
         {
             _db = db;
-            //_sendNotificationHelper = sendNotificationHelper;
         }
         public async Task<User> RequestServiceWorker(RequestWorkerDTOs input)
         {

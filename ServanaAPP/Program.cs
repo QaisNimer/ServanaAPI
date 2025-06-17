@@ -65,7 +65,7 @@ builder.Services.AddScoped<IAllWorkersByCategoryId, AllWorkersByCategoryIdServic
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<SendNotificationHelper>();
 
-var firebaseKeyPath = Path.Combine(Directory.GetCurrentDirectory(), "firebase", "servana-ab0e5-firebase-adminsdk-fbsvc-a882b6db07.json");
+var firebaseKeyPath = Path.Combine("..", "firebase", "servana-ab0e5-firebase-adminsdk-fbsvc-a882b6db07.json");
 
 FirebaseApp.Create(new AppOptions()
 {
