@@ -64,6 +64,7 @@ builder.Services.AddScoped<IProfile, ProfileService>();
 builder.Services.AddScoped<IAllWorkersByCategoryId, AllWorkersByCategoryIdService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<SendNotificationHelper>();
+builder.Services.AddScoped<IUpdateDeviceToken, UpdateDeviceTokenService>();
 
 var firebaseKeyPath = Path.Combine("..", "firebase", "servana-ab0e5-firebase-adminsdk-fbsvc-a882b6db07.json");
 

@@ -30,6 +30,7 @@ namespace ServanaAPP.Models
         public DateTime ?ExpiryOTP {  get; set; }
         public bool IsLoggedIn { get; set;} = false;
         public int CategoryID { get; set; } // For Category Table
+        public string ?DeviceToken { get; set; }
 
         public ICollection<JobRequest> JobRequestsSent { get; set; }
         public ICollection<JobRequest> JobRequestsReceived { get; set; }
