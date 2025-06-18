@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ServanaAPP.DTOs.SendNotification.Request;
 using ServanaAPP.Helpers.Firebase;
+using ServanaAPP.Interfaces;
+using ServanaAPP.Services;
 
 namespace ServanaAPP.Controllers
 {
@@ -10,9 +12,11 @@ namespace ServanaAPP.Controllers
     public class SendNotificationController : ControllerBase
     {
         private readonly SendNotificationHelper _sendNotificationHelper;
-        public SendNotificationController(SendNotificationHelper sendNotificationHelper) 
+        private readonly IUpdateDeviceToken _updateDeviceToken;
+        public SendNotificationController(SendNotificationHelper sendNotificationHelper, IUpdateDeviceToken updateDeviceToken) 
         {
         _sendNotificationHelper= sendNotificationHelper;
+            _updateDeviceToken = updateDeviceToken;
         }
         [HttpPost("[action]")]
         public async Task<IActionResult> SendNotification([FromBody] SendNotificationRequestDTO input)
@@ -27,5 +31,21 @@ namespace ServanaAPP.Controllers
                 throw new Exception(ex.Message);
             }
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateDeviceToken([FromBody] UpdateDeviceTokenRequestDTO input)
+        {
+            try
+            {
+                var UpdateDeviceToken = await _updateDeviceToken.UpdateDeviceToken(input);
+                return Ok(UpdateDeviceToken);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500,ex.Message);
+            }
+        }
     }
+
 }
