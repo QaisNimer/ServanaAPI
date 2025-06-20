@@ -66,7 +66,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<SendNotificationHelper>();
 builder.Services.AddScoped<IUpdateDeviceToken, UpdateDeviceTokenService>();
 
-var firebaseKeyPath = Path.Combine("..", "firebase", "servana-ab0e5-firebase-adminsdk-fbsvc-a882b6db07.json");
+var firebaseKeyPath = Path.Combine(Directory.GetCurrentDirectory(), "firebase", "servana-ab0e5-firebase-adminsdk-fbsvc-a882b6db07.json");
+
 
 FirebaseApp.Create(new AppOptions()
 {
@@ -96,7 +97,7 @@ app.UseSwaggerUI(
 //        c.SwaggerEndpoint("/swagger/v1/swagger.json", "BrainstormingFoodTek API V1");
 //    }  // Set Swagger endpoint
 //    );
-//}
+//    }
 
 app.UseHttpsRedirection();
 
