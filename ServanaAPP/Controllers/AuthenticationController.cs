@@ -27,7 +27,7 @@ namespace ServanaAPP.Controllers
             try
             {
                 var token = await _authService.SignUp(input);
-                return Ok(token);
+                return Ok(new { token });
             }
             catch (Exception ex)
             {

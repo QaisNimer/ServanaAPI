@@ -77,11 +77,14 @@ FirebaseApp.Create(new AppOptions()
 var app = builder.Build();
 
 // When You Want To Test Locally Comment This, If Publish Keep It
+app.UseStaticFiles();
+
+
 app.UseSwagger();
 app.UseSwaggerUI(
     c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "BrainstormingFoodTek API V1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Servana API V1");
         c.RoutePrefix = string.Empty;
     }
     );
@@ -97,7 +100,7 @@ app.UseSwaggerUI(
 //        c.SwaggerEndpoint("/swagger/v1/swagger.json", "BrainstormingFoodTek API V1");
 //    }  // Set Swagger endpoint
 //    );
-//    }
+//}
 
 app.UseHttpsRedirection();
 
