@@ -50,9 +50,9 @@ namespace ServanaAPP.Services
 
             await _db.SaveChangesAsync();
             var worker = await _db.Users
-    .Where(u => u.UserID == session.JobRequest.WorkerID && u.IsActive)
-    .Select(u => new { u.FullName })
-    .FirstOrDefaultAsync();
+                .Where(u => u.UserID == session.JobRequest.WorkerID && u.IsActive)
+                .Select(u => new { u.FullName })
+                .FirstOrDefaultAsync();
 
             var client = await _db.Users
                 .Where(u => u.UserID == session.JobRequest.ClientID && u.IsActive)
@@ -96,9 +96,9 @@ namespace ServanaAPP.Services
             await _db.SaveChangesAsync();
             // Notify worker that work has started
             var client = await _db.Users
-    .Where(u => u.UserID == session.JobRequest.ClientID && u.IsActive)
-    .Select(u => new { u.FullName })
-    .FirstOrDefaultAsync();
+                .Where(u => u.UserID == session.JobRequest.ClientID && u.IsActive)
+                .Select(u => new { u.FullName })
+                .FirstOrDefaultAsync();
 
             var worker = await _db.Users
                 .Where(u => u.UserID == session.JobRequest.WorkerID && u.IsActive)
