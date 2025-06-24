@@ -15,7 +15,7 @@ namespace ServanaAPP.Models
         public DbSet<JobRequest> JobRequests { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Rating> Ratings { get; set; }
-        
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,28 +48,53 @@ namespace ServanaAPP.Models
                 .HasForeignKey(j => j.WorkerID)
                 .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<JobRequest>()
-    .HasOne(j => j.Payment)
-    .WithOne(p => p.JobRequest)
-    .HasForeignKey<Payment>(p => p.RequestID)
-    .OnDelete(DeleteBehavior.Cascade); // or Restrict, as needed
+            .HasOne(j => j.Payment)
+            .WithOne(p => p.JobRequest)
+            .HasForeignKey<Payment>(p => p.RequestID)
+            .OnDelete(DeleteBehavior.Cascade); // or Restrict, as needed
 
-            modelBuilder.Entity<JobRequest>()
-    .HasOne(j => j.Rating)
-    .WithOne(r => r.JobRequest)
-    .HasForeignKey<Rating>(r => r.RequestID)
-    .OnDelete(DeleteBehavior.Cascade); // or Restrict
+                    modelBuilder.Entity<JobRequest>()
+            .HasOne(j => j.Rating)
+            .WithOne(r => r.JobRequest)
+            .HasForeignKey<Rating>(r => r.RequestID)
+            .OnDelete(DeleteBehavior.Cascade); // or Restrict
 
-            modelBuilder.Entity<JobRequest>()
-    .HasOne(j => j.WorkSession)
-    .WithOne(ws => ws.JobRequest)
-    .HasForeignKey<WorkSession>(ws => ws.RequestID)
-    .OnDelete(DeleteBehavior.Cascade); // or Restrict
+                    modelBuilder.Entity<JobRequest>()
+            .HasOne(j => j.WorkSession)
+            .WithOne(ws => ws.JobRequest)
+            .HasForeignKey<WorkSession>(ws => ws.RequestID)
+            .OnDelete(DeleteBehavior.Cascade); // or Restrict
 
-            modelBuilder.Entity<JobRequest>()
-    .HasKey(j => j.RequestID);
-            modelBuilder.Entity<WorkSession>()
-    .HasKey(ws => ws.SessionID);
+                    modelBuilder.Entity<JobRequest>()
+            .HasKey(j => j.RequestID);
+                    modelBuilder.Entity<WorkSession>()
+            .HasKey(ws => ws.SessionID);
+            /*This is for Category Table*/
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.HasKey(c => c.CategoryID);
 
+                entity.Property(c => c.CategoryID)
+                      .ValueGeneratedOnAdd(); // Identity (1,1)
+
+                entity.Property(c => c.ArabicName)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.Property(c => c.EnglishName)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.Property(c => c.CategoryImage)
+                      .HasMaxLength(255);
+            });
+
+            // User-Category Relationship
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Category)
+                .WithMany(c => c.Users)
+                .HasForeignKey(u => u.CategoryID)
+                .OnDelete(DeleteBehavior.Restrict); // prevent cascade delete
         }
     }
 }

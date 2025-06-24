@@ -29,10 +29,14 @@ namespace ServanaAPP.Models
         public string ?OTP {  get; set; }
         public DateTime ?ExpiryOTP {  get; set; }
         public bool IsLoggedIn { get; set;} = false;
+        public int CategoryID { get; set; } // For Category Table
+        public string ?DeviceToken { get; set; }
 
         public ICollection<JobRequest> JobRequestsSent { get; set; }
         public ICollection<JobRequest> JobRequestsReceived { get; set; }
         public ICollection<Rating> RatingsGiven { get; set; }
         public ICollection<Rating> RatingsReceived { get; set; }
+        [ForeignKey("CategoryID")]
+        public Category Category { get; set; }
     }
 }

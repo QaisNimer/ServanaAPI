@@ -16,6 +16,8 @@ namespace ServanaAPP.DTOs.Signup.Request
 
         public int Role { get; set; } = 2;
 
+        public int CategoryID { get; set; }
+
         [NotMapped]
         public IFormFile? ProfileImageFile { get; set; }
     }

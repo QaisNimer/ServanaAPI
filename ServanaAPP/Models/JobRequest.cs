@@ -8,7 +8,7 @@ namespace ServanaAPP.Models
         public int ClientID { get; set; }
         public int WorkerID { get; set; }
         public string Description { get; set; }
-        public string PaymentMethod { get; set; } // Cash or Wallet
+        public string? PaymentMethod { get; set; } // Cash or Wallet
         public string Status { get; set; } // Pending, Accepted, Started, Completed, Paid
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;

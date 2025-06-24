@@ -22,6 +22,33 @@ namespace ServanaAPP.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ServanaAPP.Models.Category", b =>
+                {
+                    b.Property<int>("CategoryID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryID"));
+
+                    b.Property<string>("ArabicName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CategoryImage")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("EnglishName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("CategoryID");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("ServanaAPP.Models.JobRequest", b =>
                 {
                     b.Property<int>("RequestID")
@@ -48,7 +75,6 @@ namespace ServanaAPP.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PaymentMethod")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
@@ -183,11 +209,17 @@ namespace ServanaAPP.Migrations
                     b.Property<string>("AddressTitle")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("CategoryID")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeviceToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -251,6 +283,8 @@ namespace ServanaAPP.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("UserID");
+
+                    b.HasIndex("CategoryID");
 
                     b.ToTable("Users");
                 });
@@ -360,6 +394,17 @@ namespace ServanaAPP.Migrations
                     b.Navigation("Worker");
                 });
 
+            modelBuilder.Entity("ServanaAPP.Models.User", b =>
+                {
+                    b.HasOne("ServanaAPP.Models.Category", "Category")
+                        .WithMany("Users")
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("ServanaAPP.Models.WorkSession", b =>
                 {
                     b.HasOne("ServanaAPP.Models.JobRequest", "JobRequest")
@@ -369,6 +414,11 @@ namespace ServanaAPP.Migrations
                         .IsRequired();
 
                     b.Navigation("JobRequest");
+                });
+
+            modelBuilder.Entity("ServanaAPP.Models.Category", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("ServanaAPP.Models.JobRequest", b =>

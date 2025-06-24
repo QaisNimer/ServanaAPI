@@ -34,8 +34,8 @@ namespace ServanaAPP.Helpers.JWT
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:IssuerIP"],
-                audience: _configuration["JWT:AudienceIP"],
+                issuer: _configuration["JWT:Issuer"],
+                audience: _configuration["JWT:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(60),
                 signingCredentials: creds
