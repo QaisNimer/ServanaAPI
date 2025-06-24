@@ -65,8 +65,10 @@ builder.Services.AddScoped<IAllWorkersByCategoryId, AllWorkersByCategoryIdServic
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<SendNotificationHelper>();
 builder.Services.AddScoped<IUpdateDeviceToken, UpdateDeviceTokenService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IWorkSession, WorkSessionService>();
 
-var firebaseKeyPath = Path.Combine(Directory.GetCurrentDirectory(), "firebase", "servana-ab0e5-firebase-adminsdk-fbsvc-a882b6db07.json");
+var firebaseKeyPath = Path.Combine(Directory.GetCurrentDirectory(), "firebase", "servana-ab0e5-firebase-adminsdk-fbsvc-debd198015.json");
 
 
 FirebaseApp.Create(new AppOptions()
@@ -80,27 +82,27 @@ var app = builder.Build();
 app.UseStaticFiles();
 
 
-app.UseSwagger();
-app.UseSwaggerUI(
-    c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Servana API V1");
-        c.RoutePrefix = string.Empty;
-    }
-    );
+//app.UseSwagger();
+//app.UseSwaggerUI(
+//    c =>
+//    {
+//        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Servana API V1");
+//        c.RoutePrefix = string.Empty;
+//    }
+//    );
 // Until Here To Test Publish
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseDeveloperExceptionPage();
-//    app.UseSwagger();
-//    app.UseSwaggerUI(c =>
-//    {
-//        c.SwaggerEndpoint("/swagger/v1/swagger.json", "BrainstormingFoodTek API V1");
-//    }  // Set Swagger endpoint
-//    );
-//}
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "BrainstormingFoodTek API V1");
+    }  // Set Swagger endpoint
+    );
+}
 
 app.UseHttpsRedirection();
 
